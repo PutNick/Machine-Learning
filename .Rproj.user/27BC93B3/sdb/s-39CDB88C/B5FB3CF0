@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Machine Learning R\"\nauthor: \"Nikolai Klassen\"\ndate: \"16 Oktober 2017\"\noutput: pdf_document\n---\n\nPractical Machine Learning:\n\nMaking a Test and a Trainingset:\n\n1) DFdata\n2) DFdataindex with createDatapartition()\n\n3) Subset Traningdata[DFdatainex,]\n4) Subset Testdata[-DFdatainex,]\n\n\nCutting Data with Hmisc:\n\nWith cut2() data can be manpulated to a factor, like income quantiles and co. \n\n### Basic preprocessing:\n\nin train()-function add the option preProcess() with one of the follwing commmands:\n\n\nVariables that are very skewed can bias the algorythm since the sd is very high, as the mean is small. Some Methods to deal with such data, are the follwing:\n\na) Standarizing (By Test-Data(!!!)):\n\nSTD = (Variable(i) - mean(Variable(i)))/sd(Variable(i))\n\nb) Rs preProcess argument:\n\nVariables can be either directly be standarised by the call within a train()-function call or by manually calling the function to the word. \n\nc) BOx-Cox transform: \n\n+ Highly Biased data to make them normally according to theory of maximum likelyhood. \n\nmethod = c(\"BoxCox\")\n\n- 0?s or NAs are not taken exaclty in regard, since it is a linear transformation.\n\nd) Imputing Data:\n\nWith KnnImpute data which is NA will be imputed with its k Neeighbours. \n\n\ntrain(model =, data=, method =, ...)\n\n- \n\nSummary:\n\nWhatever has been done to the training data must be done to the test data as well. \n\n\n## Covariate Creation\n\nCovariates are sometimes called preidctors or features. The Covariates can be used to get a better model and to estimate the question more precisely. The way how it is done:\n\n1) Raw Data to Covariate using the mathematical transofrmation in order to create a variable2. \n\n2) Making tidy data of the raw data.\n\nIt is sometimes hard to make covariates, since it is a ballancing act: summarazation vs. information loss. \n\n#### Covariates can be added as a dummy\n\nWith the function call, dummyVars, a class or factor variable can be added as a dummyvariable. \n\nIf the data does not have good variability, nearzerovar function can analyse if the data is suitable for a dummy variable, or not. \n\n### Spline:\n\nbs-function can make a polynomial function of different relationship of the feature. bs(..., rows = (number of transformation))\n\nHow to find the right features:\n-> google: feature extraction for [data type] - SCIENCE IS KEY\n\n\n## Preprocessing with PCA\n\nHighly Biased data can be viewd with PCA. Reducing it to the essential ones can reduce noise and make the algorythm better :) \n-> goal is a better matrix with less variables.\n\n### SVD\n\nIf X is a matrix with each variable in a colum and each observation in a rown then the SVD is a matrix decomposition. x = UVD^T where the colums of U are the orthogonal, the colums the of V are orthogonal and D is a diagonal. \n\n### PCA\n\nThe principal components are equal to the right singular values if you first scale the variables. \n\nwith preprocess it goes as well.\n\nmethod =\"PCA\"\n\n## Prediction with regression\n\ntraining functions\n\n\n### QUIZ Remarks\n\nggplot2 pairs with ggally\n\nggpairs()-function\n\ngrep function extracts data with text -> making functional informatiks more approable: \n\ndf[, grep(...., ...)]\n\nPCA- Accuracy:\n\n\n\n",
+    "created" : 1509630321556.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2954728738",
+    "id" : "B5FB3CF0",
+    "lastKnownWriteTime" : 1508405016,
+    "last_content_update" : 1508405016,
+    "path" : "F:/GitHub/Machine Learning/Script.Rmd",
+    "project_path" : "Script.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

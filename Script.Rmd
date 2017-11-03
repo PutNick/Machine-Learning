@@ -1,0 +1,119 @@
+---
+title: "Machine Learning R"
+author: "Nikolai Klassen"
+date: "16 Oktober 2017"
+output: pdf_document
+---
+
+Practical Machine Learning:
+
+Making a Test and a Trainingset:
+
+1) DFdata
+2) DFdataindex with createDatapartition()
+
+3) Subset Traningdata[DFdatainex,]
+4) Subset Testdata[-DFdatainex,]
+
+
+Cutting Data with Hmisc:
+
+With cut2() data can be manpulated to a factor, like income quantiles and co. 
+
+### Basic preprocessing:
+
+in train()-function add the option preProcess() with one of the follwing commmands:
+
+
+Variables that are very skewed can bias the algorythm since the sd is very high, as the mean is small. Some Methods to deal with such data, are the follwing:
+
+a) Standarizing (By Test-Data(!!!)):
+
+STD = (Variable(i) - mean(Variable(i)))/sd(Variable(i))
+
+b) Rs preProcess argument:
+
+Variables can be either directly be standarised by the call within a train()-function call or by manually calling the function to the word. 
+
+c) BOx-Cox transform: 
+
++ Highly Biased data to make them normally according to theory of maximum likelyhood. 
+
+method = c("BoxCox")
+
+- 0´s or NAs are not taken exaclty in regard, since it is a linear transformation.
+
+d) Imputing Data:
+
+With KnnImpute data which is NA will be imputed with its k Neeighbours. 
+
+
+train(model =, data=, method =, ...)
+
+- 
+
+Summary:
+
+Whatever has been done to the training data must be done to the test data as well. 
+
+
+## Covariate Creation
+
+Covariates are sometimes called preidctors or features. The Covariates can be used to get a better model and to estimate the question more precisely. The way how it is done:
+
+1) Raw Data to Covariate using the mathematical transofrmation in order to create a variable2. 
+
+2) Making tidy data of the raw data.
+
+It is sometimes hard to make covariates, since it is a ballancing act: summarazation vs. information loss. 
+
+#### Covariates can be added as a dummy
+
+With the function call, dummyVars, a class or factor variable can be added as a dummyvariable. 
+
+If the data does not have good variability, nearzerovar function can analyse if the data is suitable for a dummy variable, or not. 
+
+### Spline:
+
+bs-function can make a polynomial function of different relationship of the feature. bs(..., rows = (number of transformation))
+
+How to find the right features:
+-> google: feature extraction for [data type] - SCIENCE IS KEY
+
+
+## Preprocessing with PCA
+
+Highly Biased data can be viewd with PCA. Reducing it to the essential ones can reduce noise and make the algorythm better :) 
+-> goal is a better matrix with less variables.
+
+### SVD
+
+If X is a matrix with each variable in a colum and each observation in a rown then the SVD is a matrix decomposition. x = UVD^T where the colums of U are the orthogonal, the colums the of V are orthogonal and D is a diagonal. 
+
+### PCA
+
+The principal components are equal to the right singular values if you first scale the variables. 
+
+with preprocess it goes as well.
+
+method ="PCA"
+
+## Prediction with regression
+
+training functions
+
+
+### QUIZ Remarks
+
+ggplot2 pairs with ggally
+
+ggpairs()-function
+
+grep function extracts data with text -> making functional informatiks more approable: 
+
+df[, grep(...., ...)]
+
+PCA- Accuracy:
+
+
+

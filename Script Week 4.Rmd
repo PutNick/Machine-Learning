@@ -1,0 +1,60 @@
+---
+title: "Week 4"
+author: "Nikolai Klassen"
+date: "21 Oktober 2017"
+output: html_document
+---
+
+Regularized Regression:
+
+Our goal is to fit a regression model and penalize for lare coefficients. The model can be either simple, as a lm()-model
+
+Subset-Selection:
+
+Adding more predictors, and unfortunatley overfitting, can disturb the error and bias the model.
+
+A method to help there is to split the samples. The approach is to 1. divide the data into training/test/validation , then to treat validation
+
+Methods are:
+
+a) hard treshholding
+b) decomposing
+c) Ridge regression:
+
+
+# Combining Predictors: Boosting, random forests or model stacking.
+
+Combining factors by averaging/voting can improve accuracy, but reduces interpretability. Model Stacking is being discussed here further.
+
+
+#Time Series and Forcasting
+
+Data is dependent over time, and specifi pattern types: trends, seasonal patterns, cycles.
+
+Subsampling can make it more difficult: specific data is dependent on time and can not be subsampled easily. - dependency between nearby observations. 
+
+beware: 1.spurious correlation!
+        2.extrapolation
+        3.
+
+decompose time series into patterns is essential to analyse the data.
+
+
+1. ts()-function
+2. decompose(ts())-function
+
+Training and Test sets have to have consecutive time points. 
+
+for exponential smoothing:
+
+1. Trainfunction
+2. ets(..., model = "MMM")
+3. fcssts <- forecast(est())
+
+# Unsupervised Prediction
+
+
+
+
+
+

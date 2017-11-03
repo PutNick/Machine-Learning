@@ -1,0 +1,248 @@
+---
+title: "Machine Learning Week 3"
+author: "Nikolai Klassen"
+date: "19 Oktober 2017"
+output: html_document
+
+---
+```{r}
+library(caret)
+library(ggplot2)
+```
+
+# Trees, random Forestmods, Bogging...
+
+If data is splitble into various homogenous groups, the data is very easy to interpretate and causal interference are made easier than in complex data frames. 
+
+This data is non-linear: they suse interaction between different variables. Using data trees makes transformation less importnant. 
+
+Example: Obama Clinton Divide. Homogenous groups are taken into account and their support realtive to the other homogenous groups. 
+
+How to basic algorithm:
+
+1. Start with all variables
+2. Find the variable that best separets the outcome.
+3. Divide the data into two groups: "leaves" on the node.
+4. Within each split, find the best variable that separets the outcome
+5. Continue until the groups are too small or sufficiently "pure"
+
+Measures of impurity:
+
+p is the probability for the cases 
+in which either m or ca happen. 
+
+
+a) Misclassification Error:
+
+ $p_{m,k} = \frac{1}{N_{m}} \sum_{in Leaf m} 1(y_i = k)$
+ 
+ with 0 = perfect purity and 0.5 = no purity.
+ 
+b) Gini Index - not to be confused with the Gini Coefficient:
+ 
+ $\sum_{k = k?} p_{mk}*p_{mk?} = \sum_{k = 1}^k p_{mk}(1-p_{mk}) = 1- \sum_{k = 1}^K p^2_{mk} $
+
+1 - the squared probabilties that one case belongs to one of the other classes. 
+
+c) Deviance/Information Gain:
+
+ $-\sum_{k=1}^K p_{mk}log_2 p_{mk}$
+ 
+- the sum of the probability of being assigend to case m in leaf k. 
+
+0 = perfect purity in the leaf, 1 = no purity in the leaf
+
+### Programming a Model
+
+Function Calls are party, rpart, and tree. 
+
+### Ploting a Tree
+
+1) Making a model with train(method ="rpart") and ploting it with plot.
+-> model$finalmodel 
+
+2) fancyRpartPlot() is fancier. 
+
+
+## Bootstrap aggregating aka. bagging
+
+The basic Idea in this approach is to resample cases and recalculate predictions in order to get an average or majority vote. It generates a similar bias with reduced variance. 
+
+Example in the ozone-data.
+
+```{r "Ozone-Example"}
+library("ElemStatLearn")
+data("ozone")
+ozone <- ozone[order(ozone$ozone),]
+head(ozone)
+```
+
+### Bagged loess
+
+Were going to try to predict temperature by ozone. The Basic Idea is to create a matrix and loop over the data with sampled data from the ozone dataset. 
+
+```{r Bagged Loess Code}
+
+ll <- matrix(NA, nrow = 10, ncol = 155) ## loop matrix
+
+for(i in 1:10){
+  ss <- sample(1:dim(ozone)[1], replace = T) 
+  ozone0 <- ozone[ss,]; ozone0 <- ozone0[order(ozone0$ozone),]
+  loess0 <- loess(temperature~ ozone, data= ozone0, span= 0.2)
+  ll[i,] <- predict(loess0, newdata = data.frame(ozone=1:155))
+}
+
+## this makes 10 different samples and makes 10 different models averaging the effect. 
+
+plot(ozone$ozone, ozone$temperature, pch =19, cex = 0.5)
+
+for(i in 1:10){lines(1:155, ll[i,], col = "grey", lwd =2)} 
+
+lines(1:155, apply(ll, 2, mean), col = "red", lwd= 2)
+
+```
+
+### More baggin in Caret
+
+with bag()-from the caret package, 
+or ctreebag()-function.
+
+## Random Forests:
+
+From the idea of bagging, random forests follows the same methodology. Random forests are based on bootstrap samples, but with bootstrap variables at each split. Multiple trees are being built and voted for accuracy. Contra is: speed, interpretability, and overfitting. 
+-> Cross Validation needed. 
+
+```{r}
+data(iris); library(ggplot2)
+inTrain <- createDataPartition(y=iris$Species, p=0.7,list=FALSE)
+training <- iris[inTrain,]
+testing <- iris[-inTrain,]
+## creating test and training data
+
+library(caret)
+modFit <- train(Species~ .,data=training,method="rf",prox=TRUE)
+modFit1
+
+```
+
+-> rfcv function makes cross val.
+
+## Boosting
+
+Wiki Page https://en.wikipedia.org/wiki/AdaBoost
+
+Idea: Boosting describes the strategy behind making a weak predictor stronger by weighting and summing several weak predictors to a stronger predictor. 
+
+- The Goal is to minimize error (on training set)
+- Iterative, select one h at each step
+- Calculate weights based on errors
+- Upweight missed classifications and select next h
+
+Practically:
+1. Start with a set of classfiers $h_1, ... h_k$
+2. Create a classifier that combiens the classfication functions: $f(x) = sgn(\sum_{t =1}^T\alpha_t h_t(x)$
+
+Pros&Cons:
+
+Boosting can be used with any subset of classifiers. one large subclass is gradient boosting. Calls are:
+
+ada, boost, .... 
+
+### Wage Example
+
+```{r}
+library(ISLR); data(Wage); library(ggplot2); library(caret);
+Wage <- subset(Wage,select=-c(logwage))
+inTrain <- createDataPartition(y=Wage$wage,
+                              p=0.7, list=FALSE)
+training <- Wage[inTrain,]; testing <- Wage[-inTrain,]
+
+modFit <- train(wage ~ ., method="gbm",data=training,verbose=FALSE)
+print(modFit)
+
+```
+
+```{r}
+qplot(predict(modFit, testing), wage, data = testing)
+```
+
+
+## Model based approach
+
+The basic idea is that we assume, that the data follows a probablistic model, so that we can use Bayes? theorem to identify optimal classifiers. 
+
+Pros & Cons:
+
++ Can take advantage of structure
++ may be computionally convenient
++ Are reasonably accurate on real problems
+
+- make additional assumptions about the data
+- when the model is incorrect you may get reduced accuracy
+
+### Technically:
+
+Our goal is to build a parametric model for conditional distribution
+$P(Y = k|X =x)$
+
+1. A typical approach is to apply Bayes theorem: According to Bayes, the possibiltie of X conditiond to Y is the following
+
+
+$Pr(Y = k| X = x) = \frac{Pr(X = x| Y = k)Pr(Y = k)}{\sum_{l =1}^K Pr(X =x | Y =l)Pr(Y =l)}$
+
+
+so that the distribution of the probabilties can be defined by $f_k(x)\pi_k$. The probabilty mass function therefore is:
+
+$Pr(Y = k| X = x)=\frac{f_k(x)\pi_k}{\sum_{l =1}^K f_k(x)\pi_l}$
+
+2. The probabilties of $\pi_k$ are set in advance from the data. 
+
+3. A common choice for $f_k(x)$ is a gaussian distribution.
+
+4. Estimate the parameters for $\mu_k, \sigma_k^2$ from the data. 
+
+5. Classifiy to the class with the highest value of $Pr(Y = k| X = x)$
+
+### Classifying using the model
+
+A range of models use this approach: linear discriminant analysis, quadratic discriminant analysis, model based predictions and naive bayes. 
+
+discriminant functions: 
+naive bayes: 
+
+#### Example in the Iris Data:
+
+```{r}
+inTrain <- createDataPartition(y=iris$Species,
+                              p=0.7, list=FALSE)
+training <- iris[inTrain,]
+testing <- iris[-inTrain,]
+dim(training); dim(testing)
+
+
+```
+
+Building Predictions:
+
+```{r}
+modlda = train(Species ~ .,data=training,method="lda")
+modnb = train(Species ~ ., data=training,method="nb")
+plda = predict(modlda,testing); pnb = predict(modnb,testing)
+table(plda,pnb)
+```
+
+### Quiz 3:
+
+```{r}
+inTrain <- createDataPartition(y = segmentationOriginal$Case, list = F, p = 0.6)
+training <- segmentationOriginal[inTrain,]
+testing <- segmentationOriginal[-inTrain,]
+modFit <- train(Class~., method = "rpart", data = training)
+modfit$finalModel
+
+
+```
+
+
+
+

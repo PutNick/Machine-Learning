@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: 'Peer-Graded Assignment: Prediction Assignment Writeup'\nauthor: \"Nikolai Klassen\"\ndate: \"30 Oktober 2017\"\noutput: pdf_document\nabstract: \"Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).\"\n---\n\n## 1. Data\n\nTraining data and testing data used for this project can be downloaded here:\n\nhttps://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\n\n\nhttps://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\n\nHere i am loading the  packages needed for my analsisis and while loading, i am dismissing the data which is NA, empty or #DIV0! by one consistent N/A. \n\n```{r needed packages}\nlibrary(caret); library(rpart);\nlibrary(ggplot2);library(randomForest);library(rattle)\n```\n\n\n```{r Reading in the data}\ntestnurl <-  \"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv\"\n\ntrainurl <- \"https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv\"\n\ntraining <- read.csv(url(trainurl), na.strings = c(\"NA\", \"\", \"#DIV0!\"))\n\ntesting <- read.csv(url(testnurl), na.strings = c(\"NA\", \"\", \"#DIV0!\"))\n\n```\n\nAfter importing the data, we check both sets for consistency and see, that the variable classes is not included in the testing data. \n\n```{r Consistency of our downloaded data}\nsamecolnames <- colnames(training) == colnames(testing)\ncolnames(training)[samecolnames == F]\n\n```\n\n\n```{r deleting the NAs and removing unrelated columns}\ntraining <- training[, colSums(is.na(training)) == 0]\ntesting <- testing[, colSums(is.na(testing)) == 0]\ntraining <- training[,c(8:60)]\ntesting <- testing[c(8:60)]\n\n```\n\nFor the sake, that our only our training set contains the classe data, we will generate another training and test set.\n\n```{r}\ninTrain <-createDataPartition(training$classe , p = 0.7, list = FALSE)\ntraining2 <- training[inTrain,]\ntesting2 <- training[-inTrain,]\n```\n\n## Prediction Models \n\nHere in the following I will analyse the data with the models we have learned in class: \n\na) Random Forest\n\n\n```{r}\nset.seed(81888)\ncontrolRF <- trainControl(method = \"cv\", number = 3, verboseIter = F)\n\nmodelRF <- train(classe~., data = training2, method = \"rf\", trControl = controlRF)\n\nmodelRF$finalModel\n```\n\n\n\n\n```{r}\npredictRF <- predict(modelRF, newdata = testing2)\nconfMat <- confusionMatrix(predictRF, testing2$classe)\n\nconfMat\n```\n\nb) Decision Trees \n```{r}\nset.seed(8188)\nmodelTree <- rpart(classe~., data = training2, method =\"class\")\n\nfancyRpartPlot(modelTree, cex = 0.2)\n```\n\n\n### Data Validation with our Model:\n\n```{r}\npredict(modelRF, testing)\n```\n\n",
+    "created" : 1509629187167.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3038642972",
+    "id" : "D7D8D340",
+    "lastKnownWriteTime" : 1509713462,
+    "last_content_update" : 1509713462310,
+    "path" : "F:/GitHub/Machine Learning/PGA.Rmd",
+    "project_path" : "PGA.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

@@ -1,0 +1,3 @@
+"0","set.seed(8188)"
+"0","modelTree <- rpart(classe~., data = training2, method =""class"")"
+"0","fancyRpartPlot(modelTree, cex = 0.2)"

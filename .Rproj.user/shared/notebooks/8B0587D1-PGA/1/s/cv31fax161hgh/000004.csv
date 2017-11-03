@@ -1,0 +1,6 @@
+"0","samecolnames <- colnames(training) == colnames(testing)"
+"0","colnames(training)[samecolnames == F]"
+"1","[1]"
+"1"," ""classe"""
+"1","
+"

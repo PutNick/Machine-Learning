@@ -1,0 +1,102 @@
+---
+title: 'Peer-Graded Assignment: Prediction Assignment Writeup'
+author: "Nikolai Klassen"
+date: "30 Oktober 2017"
+output: pdf_document
+abstract: "Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset)."
+---
+
+## 1. Data
+
+Training data and testing data used for this project can be downloaded here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+Here i am loading the  packages needed for my analsisis and while loading, i am dismissing the data which is NA, empty or #DIV0! by one consistent N/A. 
+
+```{r needed packages}
+library(caret); library(rpart);
+library(ggplot2);library(randomForest);library(rattle)
+```
+
+
+```{r Reading in the data}
+testnurl <-  "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+
+trainurl <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+
+training <- read.csv(url(trainurl), na.strings = c("NA", "", "#DIV0!"))
+
+testing <- read.csv(url(testnurl), na.strings = c("NA", "", "#DIV0!"))
+
+```
+
+After importing the data, we check both sets for consistency and see, that the variable classes is not included in the testing data. 
+
+```{r Consistency of our downloaded data}
+samecolnames <- colnames(training) == colnames(testing)
+colnames(training)[samecolnames == F]
+
+```
+
+
+```{r deleting the NAs and removing unrelated columns}
+training <- training[, colSums(is.na(training)) == 0]
+testing <- testing[, colSums(is.na(testing)) == 0]
+training <- training[,c(8:60)]
+testing <- testing[c(8:60)]
+
+```
+
+For the sake, that our only our training set contains the classe data, we will generate another training and test set.
+
+```{r}
+inTrain <-createDataPartition(training$classe , p = 0.7, list = FALSE)
+training2 <- training[inTrain,]
+testing2 <- training[-inTrain,]
+```
+
+## Prediction Models 
+
+Here in the following I will analyse the data with the models we have learned in class: 
+
+a) Random Forest
+
+
+```{r}
+set.seed(81888)
+controlRF <- trainControl(method = "cv", number = 3, verboseIter = F)
+
+modelRF <- train(classe~., data = training2, method = "rf", trControl = controlRF)
+
+modelRF$finalModel
+```
+
+
+
+
+```{r}
+predictRF <- predict(modelRF, newdata = testing2)
+confMat <- confusionMatrix(predictRF, testing2$classe)
+
+confMat
+```
+
+b) Decision Trees 
+```{r}
+set.seed(8188)
+modelTree <- rpart(classe~., data = training2, method ="class")
+
+fancyRpartPlot(modelTree, cex = 0.2)
+```
+
+
+### Data Validation with our Model:
+
+```{r}
+predict(modelRF, testing)
+```
+

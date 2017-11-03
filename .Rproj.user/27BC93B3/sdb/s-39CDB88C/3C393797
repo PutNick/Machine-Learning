@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"Week 4\"\nauthor: \"Nikolai Klassen\"\ndate: \"21 Oktober 2017\"\noutput: html_document\n---\n\nRegularized Regression:\n\nOur goal is to fit a regression model and penalize for lare coefficients. The model can be either simple, as a lm()-model\n\nSubset-Selection:\n\nAdding more predictors, and unfortunatley overfitting, can disturb the error and bias the model.\n\nA method to help there is to split the samples. The approach is to 1. divide the data into training/test/validation , then to treat validation\n\nMethods are:\n\na) hard treshholding\nb) decomposing\nc) Ridge regression:\n\n\n# Combining Predictors: Boosting, random forests or model stacking.\n\nCombining factors by averaging/voting can improve accuracy, but reduces interpretability. Model Stacking is being discussed here further.\n\n\n#Time Series and Forcasting\n\nData is dependent over time, and specifi pattern types: trends, seasonal patterns, cycles.\n\nSubsampling can make it more difficult: specific data is dependent on time and can not be subsampled easily. - dependency between nearby observations. \n\nbeware: 1.spurious correlation!\n        2.extrapolation\n        3.\n\ndecompose time series into patterns is essential to analyse the data.\n\n\n1. ts()-function\n2. decompose(ts())-function\n\nTraining and Test sets have to have consecutive time points. \n\nfor exponential smoothing:\n\n1. Trainfunction\n2. ets(..., model = \"MMM\")\n3. fcssts <- forecast(est())\n\n# Unsupervised Prediction\n\n\n\n\n\n\n",
+    "created" : 1509630316689.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2947376282",
+    "id" : "3C393797",
+    "lastKnownWriteTime" : 1508755935,
+    "last_content_update" : 1508755935,
+    "path" : "F:/GitHub/Machine Learning/Script Week 4.Rmd",
+    "project_path" : "Script Week 4.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
